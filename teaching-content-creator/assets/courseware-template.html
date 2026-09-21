@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第N章 · 章节名称 · 课件</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #eef2ff;
+    --accent: #f59e0b;
+    --accent-light: #fffbeb;
+    --success: #10b981;
+    --success-light: #ecfdf5;
+    --danger: #ef4444;
+    --danger-light: #fef2f2;
+    --dark: #0f172a;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans SC', system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-700);
+    line-height: 1.85;
+    font-size: 16px;
+  }
+
+  /* ===== 顶部导航 ===== */
+  .topbar {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    padding: 0 40px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .topbar-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 16px;
+  }
+  .topbar-course { font-size: 13px; color: #94a3b8; }
+  .topbar-title { font-size: 17px; font-weight: 700; }
+  .topbar-right { font-size: 13px; color: #64748b; }
+
+  /* ===== 布局 ===== */
+  .layout { display: flex; max-width: 1440px; margin: 0 auto; }
+
+  /* ===== 侧边栏 ===== */
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    padding: 32px 20px;
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    border-right: 1px solid var(--gray-200);
+    background: #fff;
+  }
+  .sidebar-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+    padding-left: 12px;
+  }
+  .sidebar ul { list-style: none; }
+  .sidebar li { margin-bottom: 2px; }
+  .sidebar a {
+    color: var(--gray-600);
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .sidebar a:hover { background: var(--gray-50); color: var(--primary-dark); }
+  .sidebar a.active {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    font-weight: 600;
+  }
+  .sidebar a.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 18px;
+    background: var(--primary);
+    border-radius: 0 3px 3px 0;
+  }
+  .sidebar a .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gray-300);
+    flex-shrink: 0;
+  }
+  .sidebar a.active .dot { background: var(--primary); }
+
+  /* ===== 正文 ===== */
+  .main {
+    flex: 1;
+    padding: 40px 56px 60px;
+    min-width: 0;
+  }
+  .content-wrapper { max-width: 820px; margin: 0 auto; }
+
+  /* 章节大标题 */
+  .chapter-hero {
+    background: linear-gradient(135deg, var(--dark) 0%, #1e293b 100%);
+    border-radius: 16px;
+    padding: 40px 44px;
+    margin-bottom: 36px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .chapter-hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .chapter-hero .tag {
+    display: inline-block;
+    padding: 4px 14px;
+    background: rgba(99,102,241,0.2);
+    border: 1px solid rgba(99,102,241,0.3);
+    border-radius: 100px;
+    font-size: 12px;
+    color: #a5b4fc;
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+  }
+  .chapter-hero h1 { font-size: 32px; font-weight: 900; margin-bottom: 8px; }
+  .chapter-hero p { font-size: 15px; color: #94a3b8; font-weight: 300; }
+
+  /* 学习目标卡片 */
+  .objectives-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 40px;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .objectives-card h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .objectives-card h2::before {
+    content: '';
+    width: 4px; height: 18px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+  .objectives-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .objective-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--gray-600);
+    line-height: 1.6;
+  }
+  .objective-item .check {
+    width: 20px; height: 20px;
+    background: var(--success-light);
+    color: var(--success);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* 章节 */
+  .section {
+    margin-bottom: 48px;
+    scroll-margin-top: 90px;
+  }
+  .section > h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--gray-800);
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section > h2 .sec-num {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section h3 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin: 28px 0 14px;
+    padding-left: 14px;
+    border-left: 3px solid var(--primary);
+  }
+  .section h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-700);
+    margin: 22px 0 10px;
+  }
+  .section p { margin-bottom: 14px; font-size: 15.5px; color: var(--gray-600); }
+  .section ul, .section ol { padding-left: 22px; margin-bottom: 14px; }
+  .section li { margin-bottom: 8px; font-size: 15.5px; color: var(--gray-600); }
+  .section strong { color: var(--gray-800); font-weight: 600; }
+
+  /* 行内代码 */
+  code {
+    background: var(--gray-100);
+    color: #db2777;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', Consolas, "Courier New", monospace;
+    font-size: 13.5px;
+  }
+
+  /* 代码块 */
+  pre {
+    background: var(--dark);
+    color: #e2e8f0;
+    padding: 20px 24px 22px;
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', Consolas, "Courier New", monospace;
+    font-size: 13.5px;
+    line-height: 1.75;
+    overflow-x: auto;
+    margin: 18px 0;
+    border: 1px solid #1e293b;
+    position: relative;
+  }
+  pre::before {
+    content: '';
+    display: block;
+    width: 10px; height: 10px;
+    background: #ef4444;
+    border-radius: 50%;
+    box-shadow: 18px 0 0 #f59e0b, 36px 0 0 #22c55e;
+    margin-bottom: 14px;
+  }
+  pre code {
+    background: none;
+    color: #e2e8f0;
+    padding: 0;
+    font-size: 13.5px;
+  }
+  .cm { color: #64748b; }
+  .kw { color: #c084fc; }
+  .str { color: #86efac; }
+  .fn { color: #60a5fa; }
+  .num { color: #fbbf24; }
+  .op { color: #f472b6; }
+
+  /* 表格 */
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    font-size: 14.5px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  th {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    padding: 13px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-600);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--gray-50); }
+
+  /* 提示框 */
+  .callout {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 18px 0;
+    font-size: 14.5px;
+    line-height: 1.7;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .callout .icon {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .callout.tip {
+    background: var(--accent-light);
+    border: 1px solid #fde68a;
+    color: #92400e;
+  }
+  .callout.tip .icon { background: #f59e0b; color: #fff; }
+  .callout.note {
+    background: var(--primary-light);
+    border: 1px solid #c7d2fe;
+    color: #3730a3;
+  }
+  .callout.note .icon { background: var(--primary); color: #fff; }
+  .callout.warn {
+    background: var(--danger-light);
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+  .callout.warn .icon { background: var(--danger); color: #fff; }
+
+  /* 公式 */
+  .formula {
+    text-align: center;
+    font-size: 17px;
+    padding: 18px;
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    margin: 18px 0;
+    font-family: "Cambria Math", "Times New Roman", serif;
+    color: var(--gray-800);
+  }
+
+  /* 小节小结 */
+  .mini-summary {
+    background: var(--success-light);
+    border: 1px solid #a7f3d0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+  .mini-summary h4 {
+    color: #065f46;
+    margin: 0 0 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mini-summary p { margin: 0; font-size: 14.5px; color: #064e3b; }
+
+  /* 本章小结 */
+  .summary-section {
+    background: #fff;
+    border-radius: 14px;
+    padding: 32px 36px;
+    margin-bottom: 36px;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .summary-section h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--gray-800);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .summary-points { list-style: none; padding: 0; }
+  .summary-points li {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 15px;
+    color: var(--gray-600);
+  }
+  .summary-points li:last-child { border-bottom: none; }
+  .summary-points .sp-icon {
+    width: 26px; height: 26px;
+    background: var(--success-light);
+    color: var(--success);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* 思考题 */
+  .questions-section {
+    background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 100%);
+    border-radius: 14px;
+    padding: 32px 36px;
+    border: 1px solid #fecaca;
+  }
+  .questions-section h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #991b1b;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .questions-section ol { padding-left: 24px; }
+  .questions-section li {
+    margin-bottom: 14px;
+    font-size: 15px;
+    color: #7f1d1d;
+    line-height: 1.7;
+  }
+
+  /* 页脚 */
+  .footer {
+    text-align: center;
+    padding: 32px;
+    color: var(--gray-400, #94a3b8);
+    font-size: 13px;
+    border-top: 1px solid var(--gray-200);
+    margin-top: 48px;
+  }
+
+  /* 滚动条 */
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+  pre::-webkit-scrollbar { height: 6px; }
+  pre::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">课</div>
+    <div>
+      <div class="topbar-course">课程名称</div>
+      <div class="topbar-title">第N章 · 章节名称</div>
+    </div>
+  </div>
+  <div class="topbar-right">课件讲义</div>
+</header>
+
+<div class="layout">
+  <!-- 侧边栏 -->
+  <nav class="sidebar">
+    <div class="sidebar-label">本章目录</div>
+    <ul>
+      <li><a href="#objectives" class="active"><span class="dot"></span>学习目标</a></li>
+      <li><a href="#section1"><span class="dot"></span>1. 知识点一</a></li>
+      <li><a href="#section2"><span class="dot"></span>2. 知识点二</a></li>
+      <li><a href="#section3"><span class="dot"></span>3. 知识点三</a></li>
+      <li><a href="#summary"><span class="dot"></span>本章小结</a></li>
+      <li><a href="#questions"><span class="dot"></span>思考题</a></li>
+    </ul>
+  </nav>
+
+  <!-- 正文 -->
+  <main class="main">
+    <div class="content-wrapper">
+
+      <!-- 章节头 -->
+      <div class="chapter-hero">
+        <div class="tag">CHAPTER N</div>
+        <h1>章节名称</h1>
+        <p>一句话描述本章核心内容，让学习者知道学完能获得什么</p>
+      </div>
+
+      <!-- 学习目标 -->
+      <div class="objectives-card" id="objectives">
+        <h2>学习目标</h2>
+        <div class="objectives-grid">
+          <div class="objective-item">
+            <div class="check">✓</div>
+            <span>理解知识点一的核心概念与基本原理</span>
+          </div>
+          <div class="objective-item">
+            <div class="check">✓</div>
+            <span>掌握知识点二的实现方法与应用场景</span>
+          </div>
+          <div class="objective-item">
+            <div class="check">✓</div>
+            <span>能够运用知识点三解决实际问题</span>
+          </div>
+          <div class="objective-item">
+            <div class="check">✓</div>
+            <span>了解相关技术的优缺点与选型依据</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 知识点一 -->
+      <section class="section" id="section1">
+        <h2><span class="sec-num">1</span>知识点一：核心概念</h2>
+
+        <h3>1.1 概念定义</h3>
+        <p>
+          在这里详细描述概念的定义。用准确、严谨的语言说明该概念是什么，
+          它的本质特征是什么。可以通过类比的方式帮助学生理解，例如：
+          "这就好比日常生活中的 XXX，其核心原理是相通的。"
+        </p>
+
+        <div class="callout tip">
+          <div class="icon">!</div>
+          <div><strong>理解提示：</strong>这里写一个帮助学生建立直觉的类比或关键洞察，让抽象概念变得具体。</div>
+        </div>
+
+        <h3>1.2 核心原理</h3>
+        <p>
+          详细解释该概念的工作原理。分步骤说明其内部机制，
+          让学生不仅知道"是什么"，还理解"为什么"。
+        </p>
+
+        <div class="formula">
+          Y = f(X) = W · X + b
+        </div>
+
+        <p>公式中各符号的含义：</p>
+        <ul>
+          <li><strong>X</strong>：输入向量，表示原始数据</li>
+          <li><strong>W</strong>：权重矩阵，决定各维度的重要性</li>
+          <li><strong>b</strong>：偏置项，用于调整输出基准</li>
+          <li><strong>Y</strong>：输出结果</li>
+        </ul>
+
+        <h3>1.3 示例说明</h3>
+        <p>通过一个具体的例子来演示概念的应用：</p>
+        <pre><code><span class="cm">// 示例：基本用法</span>
+<span class="kw">const</span> result = <span class="fn">process</span>(input, {
+  option1: <span class="str">"value1"</span>,
+  option2: <span class="kw">true</span>
+});
+
+console.log(result); <span class="cm">// 输出处理后的结果</span></code></pre>
+
+        <div class="mini-summary">
+          <h4>本节小结</h4>
+          <p>用2-3句话总结本节最核心的要点，帮助学生快速回顾。</p>
+        </div>
+      </section>
+
+      <!-- 知识点二 -->
+      <section class="section" id="section2">
+        <h2><span class="sec-num">2</span>知识点二：实现方法</h2>
+
+        <h3>2.1 实现思路</h3>
+        <p>
+          描述实现该功能的整体思路。可以分为几个步骤，
+          每个步骤说明做什么、为什么这么做。
+        </p>
+
+        <h3>2.2 详细实现</h3>
+        <p>给出完整的实现代码，并逐段注释说明：</p>
+
+        <pre><code><span class="cm">/**
+ * 核心处理函数
+ * @param {Array} data - 输入数据
+ * @param {Object} config - 配置选项
+ * @returns {Array} 处理后的结果
+ */</span>
+<span class="kw">function</span> <span class="fn">processData</span>(data, config = {}) {
+  <span class="cm">// 参数校验：确保输入符合预期</span>
+  <span class="kw">if</span> (!Array.isArray(data)) {
+    <span class="kw">throw new</span> TypeError(<span class="str">"data 必须是数组"</span>);
+  }
+
+  <span class="cm">// 核心处理逻辑</span>
+  <span class="kw">return</span> data
+    .filter(item => item != <span class="num">null</span>)  <span class="cm">// 过滤无效值</span>
+    .map(item => ({
+      ...item,
+      processed: <span class="kw">true</span>,
+      timestamp: Date.now()
+    }));
+}</code></pre>
+
+        <h3>2.3 注意事项</h3>
+        <div class="callout note">
+          <div class="icon">i</div>
+          <div><strong>实践经验：</strong>这里写在实际开发中容易踩的坑，以及最佳实践建议。</div>
+        </div>
+
+        <div class="callout warn">
+          <div class="icon">×</div>
+          <div><strong>常见错误：</strong>这里写初学者最容易犯的错误，以及如何避免。</div>
+        </div>
+
+        <h3>2.4 对比分析</h3>
+        <table>
+          <thead>
+            <tr><th>对比维度</th><th>方法 A</th><th>方法 B</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>时间复杂度</td><td>O(n log n)</td><td>O(n)</td></tr>
+            <tr><td>空间复杂度</td><td>O(1)</td><td>O(n)</td></tr>
+            <tr><td>适用场景</td><td>内存受限环境</td><td>追求处理速度</td></tr>
+            <tr><td>实现难度</td><td>中等</td><td>简单</td></tr>
+          </tbody>
+        </table>
+
+        <div class="mini-summary">
+          <h4>本节小结</h4>
+          <p>总结实现方法的关键步骤和选型考量，强调工程实践中的权衡。</p>
+        </div>
+      </section>
+
+      <!-- 知识点三 -->
+      <section class="section" id="section3">
+        <h2><span class="sec-num">3</span>知识点三：实际应用</h2>
+
+        <h3>3.1 应用场景</h3>
+        <p>列举该技术在实际项目中的典型应用场景：</p>
+        <ol>
+          <li><strong>场景一</strong>：描述具体场景和解决的问题</li>
+          <li><strong>场景二</strong>：描述具体场景和解决的问题</li>
+          <li><strong>场景三</strong>：描述具体场景和解决的问题</li>
+        </ol>
+
+        <h3>3.2 综合案例</h3>
+        <p>
+          通过一个完整的综合案例，展示如何将本章所学知识串联起来，
+          解决一个实际问题。案例应包含问题背景、解决方案、关键代码和结果分析。
+        </p>
+
+        <div class="callout tip">
+          <div class="icon">?</div>
+          <div><strong>思考题：</strong>在案例中穿插引导性问题，促使学生主动思考，而不是被动接受。</div>
+        </div>
+
+        <div class="mini-summary">
+          <h4>本节小结</h4>
+          <p>总结应用要点，强调理论与实践的结合，鼓励学生动手尝试。</p>
+        </div>
+      </section>
+
+      <!-- 本章小结 -->
+      <section class="summary-section" id="summary">
+        <h2>本章小结</h2>
+        <ul class="summary-points">
+          <li>
+            <div class="sp-icon">1</div>
+            <div><strong>知识点一</strong>：一句话总结核心概念，点透本质</div>
+          </li>
+          <li>
+            <div class="sp-icon">2</div>
+            <div><strong>知识点二</strong>：一句话总结实现方法与关键步骤</div>
+          </li>
+          <li>
+            <div class="sp-icon">3</div>
+            <div><strong>知识点三</strong>：一句话总结应用场景与实践要点</div>
+          </li>
+        </ul>
+        <p style="margin-top:16px; font-size:14.5px; color:var(--gray-500);">
+          本章我们系统学习了 XXX 的核心概念、实现方法和实际应用。
+          下一章将在此基础上，进一步探讨进阶主题。
+        </p>
+      </section>
+
+      <!-- 思考题 -->
+      <section class="questions-section" id="questions">
+        <h2>思考题</h2>
+        <ol>
+          <li>请用自己的话解释知识点一的核心原理，并举例说明。</li>
+          <li>对比方法 A 和方法 B，在什么情况下你会选择方法 A？为什么？</li>
+          <li>尝试修改综合案例中的代码，优化其性能，并说明优化思路。</li>
+          <li>思考本章知识还可以应用到哪些未提及的场景中？</li>
+        </ol>
+      </section>
+
+      <div class="footer">
+        课程名称 · 第N章 · 课件讲义
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  const navLinks = document.querySelectorAll('.sidebar a');
+  const sections = document.querySelectorAll('[id]');
+
+  function updateActiveNav() {
+    let current = '';
+    sections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 120) current = section.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+    });
+  }
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+</script>
+
+</body>
+</html>
