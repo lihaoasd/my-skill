@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课程名称 · 课程目录</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #eef2ff;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --dark: #0f172a;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+  }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-700);
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  /* ===== 顶部导航 ===== */
+  .topbar {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    padding: 0 40px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .topbar-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 16px;
+  }
+  .topbar-course { font-size: 13px; color: #94a3b8; }
+  .topbar-title { font-size: 17px; font-weight: 700; }
+  .topbar-right { font-size: 13px; color: #64748b; }
+
+  /* ===== Hero 区域 ===== */
+  .hero {
+    background: linear-gradient(135deg, var(--dark) 0%, #1e293b 60%, #312e81 100%);
+    color: #fff;
+    padding: 64px 40px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -80px;
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: 10%;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-tag {
+    display: inline-block;
+    padding: 5px 16px;
+    background: rgba(99,102,241,0.2);
+    border: 1px solid rgba(99,102,241,0.35);
+    border-radius: 100px;
+    font-size: 12px;
+    color: #a5b4fc;
+    margin-bottom: 20px;
+    letter-spacing: 1.5px;
+  }
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 900;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, #fff 0%, #c7d2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.25;
+  }
+  .hero-desc {
+    font-size: 17px;
+    color: #94a3b8;
+    max-width: 680px;
+    margin-bottom: 32px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+  }
+  .stat-item { display: flex; flex-direction: column; }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  /* ===== 主体 ===== */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 40px 64px;
+  }
+  .section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+  }
+
+  /* ===== 章节卡片 ===== */
+  .chapter-list { display: flex; flex-direction: column; gap: 16px; }
+  .chapter-card {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid var(--gray-200);
+    padding: 28px 32px;
+    display: flex;
+    gap: 24px;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .chapter-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 8px 30px rgba(99,102,241,0.12);
+    transform: translateY(-2px);
+  }
+  .chapter-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--primary), #8b5cf6);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .chapter-card:hover::before { opacity: 1; }
+
+  .chapter-num {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .chapter-body { flex: 1; min-width: 0; }
+  .chapter-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 6px;
+  }
+  .chapter-desc {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  .chapter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .chapter-tags span {
+    padding: 4px 12px;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    border-radius: 100px;
+    font-size: 12px;
+  }
+  .chapter-links {
+    display: flex;
+    gap: 10px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-outline {
+    background: #fff;
+    color: var(--primary-dark);
+    border-color: var(--primary);
+  }
+  .btn-outline:hover { background: var(--primary-light); }
+  .btn .icon { font-size: 14px; }
+
+  /* 完成状态标记 */
+  .chapter-card.completed .chapter-num {
+    background: linear-gradient(135deg, var(--success), #059669);
+  }
+  .chapter-card.completed::before {
+    background: linear-gradient(180deg, var(--success), #34d399);
+    opacity: 1;
+  }
+  .status-badge {
+    position: absolute;
+    top: 20px; right: 24px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .status-done {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  .status-pending {
+    background: var(--gray-100);
+    color: var(--gray-500);
+  }
+
+  /* ===== 页脚 ===== */
+  .footer {
+    text-align: center;
+    padding: 32px;
+    color: #94a3b8;
+    font-size: 13px;
+    border-top: 1px solid var(--gray-200);
+    background: #fff;
+  }
+
+  /* 响应式 */
+  @media (max-width: 768px) {
+    .hero { padding: 40px 24px; }
+    .hero h1 { font-size: 28px; }
+    .hero-stats { gap: 24px; }
+    .main { padding: 32px 20px; }
+    .chapter-card { flex-direction: column; padding: 20px; }
+    .chapter-num { width: 44px; height: 44px; font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">课</div>
+    <div>
+      <div class="topbar-course">课程目录</div>
+      <div class="topbar-title">课程名称</div>
+    </div>
+  </div>
+  <div class="topbar-right">共 N 章</div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">COURSE CATALOG</div>
+    <h1>课程名称</h1>
+    <p class="hero-desc">
+      一句话介绍课程的核心内容、适合人群和学习价值。让学习者在进入具体章节前，
+      对整个课程有一个整体的认识和预期。
+    </p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">N</span>
+        <span class="stat-label">章节总数</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">XX</span>
+        <span class="stat-label">知识点</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">Xh</span>
+        <span class="stat-label">预计时长</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">入门→进阶</span>
+        <span class="stat-label">难度梯度</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 章节列表 -->
+<main class="main">
+  <div class="section-label">章节目录</div>
+
+  <div class="chapter-list">
+
+    <!-- 第1章（已完成示例） -->
+    <div class="chapter-card completed">
+      <div class="chapter-num">01</div>
+      <div class="chapter-body">
+        <div class="chapter-title">第一章：章节名称</div>
+        <div class="chapter-desc">简要描述本章内容，让学习者知道这一章讲什么、学完能获得什么。</div>
+        <div class="chapter-tags">
+          <span>知识点一</span>
+          <span>知识点二</span>
+          <span>知识点三</span>
+        </div>
+        <div class="chapter-links">
+          <a href="chapter-1-courseware.html" class="btn btn-primary"><span class="icon">📖</span> 课件讲义</a>
+          <a href="chapter-1-ppt.html" class="btn btn-outline"><span class="icon">📊</span> 教学PPT</a>
+        </div>
+      </div>
+      <span class="status-badge status-done">已完成</span>
+    </div>
+
+    <!-- 第2章（进行中/待学习示例） -->
+    <div class="chapter-card">
+      <div class="chapter-num">02</div>
+      <div class="chapter-body">
+        <div class="chapter-title">第二章：章节名称</div>
+        <div class="chapter-desc">简要描述本章内容，说明与上一章的衔接关系和核心重点。</div>
+        <div class="chapter-tags">
+          <span>知识点一</span>
+          <span>知识点二</span>
+          <span>知识点三</span>
+          <span>知识点四</span>
+        </div>
+        <div class="chapter-links">
+          <a href="chapter-2-courseware.html" class="btn btn-primary"><span class="icon">📖</span> 课件讲义</a>
+          <a href="chapter-2-ppt.html" class="btn btn-outline"><span class="icon">📊</span> 教学PPT</a>
+        </div>
+      </div>
+      <span class="status-badge status-pending">待学习</span>
+    </div>
+
+    <!-- 第3章 -->
+    <div class="chapter-card">
+      <div class="chapter-num">03</div>
+      <div class="chapter-body">
+        <div class="chapter-title">第三章：章节名称</div>
+        <div class="chapter-desc">简要描述本章内容，突出实战性或进阶内容。</div>
+        <div class="chapter-tags">
+          <span>知识点一</span>
+          <span>知识点二</span>
+        </div>
+        <div class="chapter-links">
+          <a href="chapter-3-courseware.html" class="btn btn-primary"><span class="icon">📖</span> 课件讲义</a>
+          <a href="chapter-3-ppt.html" class="btn btn-outline"><span class="icon">📊</span> 教学PPT</a>
+        </div>
+      </div>
+      <span class="status-badge status-pending">待学习</span>
+    </div>
+
+    <!-- 第4章 -->
+    <div class="chapter-card">
+      <div class="chapter-num">04</div>
+      <div class="chapter-body">
+        <div class="chapter-title">第四章：章节名称</div>
+        <div class="chapter-desc">简要描述本章内容，可标注为综合实战或项目章节。</div>
+        <div class="chapter-tags">
+          <span>综合实战</span>
+          <span>项目演练</span>
+        </div>
+        <div class="chapter-links">
+          <a href="chapter-4-courseware.html" class="btn btn-primary"><span class="icon">📖</span> 课件讲义</a>
+          <a href="chapter-4-ppt.html" class="btn btn-outline"><span class="icon">📊</span> 教学PPT</a>
+        </div>
+      </div>
+      <span class="status-badge status-pending">待学习</span>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  课程名称 · 课程目录 · 共 N 章
+</footer>
+
+</body>
+</html>
